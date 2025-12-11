@@ -8,12 +8,14 @@ CREATE TABLE meals (
 );
 
 
+
 CREATE TABLE foods (
     food_id INT NOT NULL,
     name VARCHAR2(30) NOT NULL,
     PRIMARY KEY(food_id),
     UNIQUE(name)
 );
+
 
 
 CREATE TABLE meal_foods (
@@ -25,6 +27,7 @@ CREATE TABLE meal_foods (
 );
 
 
+
 CREATE TABLE students (
     student_id VARCHAR2(10) NOT NULL,
     name VARCHAR2(20) NOT NULL,
@@ -34,14 +37,17 @@ CREATE TABLE students (
     CONSTRAINT check_gender CHECK(gender IN ('F', 'M') OR gender IS NULL)
 );
 
+
+
 CREATE TABLE accounts (
     student_id VARCHAR2(10) NOT NULL,
     password_hash VARCHAR2(255) NOT NULL,
-    created_at DATE NOT NULL,
-    last_login DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+    last_login TIMESTAMP,
     PRIMARY KEY(student_id),
     FOREIGN KEY(student_id) REFERENCES students(student_id) ON DELETE CASCADE
 );
+
 
 
 CREATE TABLE reviews (
@@ -50,7 +56,7 @@ CREATE TABLE reviews (
     student_id VARCHAR2(10),
     rating INT NOT NULL,
     review_comment VARCHAR2(500),
-    created_at DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
     PRIMARY KEY(review_id),
     FOREIGN KEY(meal_id) REFERENCES meals(meal_id) ON DELETE SET NULL,
     FOREIGN KEY(student_id) REFERENCES students(student_id) ON DELETE SET NULL,
