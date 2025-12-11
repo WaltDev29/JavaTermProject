@@ -18,6 +18,7 @@ public class DayMealView extends JPanel {
     private String[] colNames = {"구분", "메뉴", "평점"};
 
     // todo Layout 예쁘게
+    // ===================== 생성자 (라벨 설정) =====================
     public DayMealView() {
         LocalDate localDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
@@ -69,10 +70,7 @@ public class DayMealView extends JPanel {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
 
-        // 스크롤바 설정
-        JScrollPane scrollPane = new JScrollPane(table);
-
-        add(scrollPane, BorderLayout.CENTER);
+        add(table, BorderLayout.CENTER);
     }
 
 

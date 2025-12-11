@@ -1,13 +1,16 @@
 package domain;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Meal {
     private int mealId;
     private Date date;
+    private String formatedDate;
     private String dayOfWeek;
     private String type;
     private ArrayList<String> menus;
@@ -15,6 +18,7 @@ public class Meal {
     public Meal(int mealId, Date date, String type) {
         this.mealId = mealId;
         this.date = date;
+        this.formatedDate = getFormatedDate(date);
         this.dayOfWeek = getKoreanDay(date);
         this.type = type;
         this.menus = new ArrayList<>();
@@ -26,6 +30,11 @@ public class Meal {
         this.date = date;
         this.type = "none";
         this.menus = new ArrayList<>();
+    }
+
+    private String getFormatedDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일");
+        return sdf.format(date);
     }
 
     private String getKoreanDay(Date date) {
@@ -49,6 +58,10 @@ public class Meal {
 
     public Date getDate() {
         return date;
+    }
+
+    public String getFormatedDate() {
+        return formatedDate;
     }
 
     public String getDayOfWeek() {

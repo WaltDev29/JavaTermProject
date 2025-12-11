@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MealRepository {
+
+    // todo 메뉴가 비어있을 경우 빈 메뉴라는 것을 설정해야 함. (빈 메뉴일 경우 리뷰 못하도록)
     // ===================== SELECT 메서드 =====================
 
     // ============ 공용 메서드 ============
