@@ -41,25 +41,24 @@ public class MainController extends JFrame {
     public MainController() {
         mealRepo = new MealRepository();
         reviewRepo = new ReviewRepository();
-//        mealList = mealRepo.getMealsbyDate(Date.valueOf(LocalDate.now()));
-//
-//        dayMealPan = new DayMealView();
-//        dayMealPan.setMealList(mealList);
-//        dayMealPan.initView();
-//        dayMealPan.setTable();
+        mealList = mealRepo.getMealsbyDate(Date.valueOf(LocalDate.now()));
+
+        dayMealPan = new DayMealView();
+        dayMealPan.setMealList(mealList);
+        dayMealPan.initView();
+        dayMealPan.setTable();
 
         tab.add("금일 메뉴",dayMealPan);
 
         weekMealPan = new WeekMealView();
-//        mealList = mealRepo.getMealsbyDates(Date.valueOf(monday), Date.valueOf(friday));
-//        weekMealPan.setMealList(mealList);
-//        weekMealPan.initView();
-//        weekMealPan.setMealList(mealList);
+        mealList = mealRepo.getMealsbyDates(Date.valueOf(monday), Date.valueOf(friday));
+        weekMealPan.setMealList(mealList);
+        weekMealPan.initView();
+        weekMealPan.setMealList(mealList);
 
         tab.add("금주 메뉴", weekMealPan);
 
         reviewPan = new ReviewView();
-        reviewPan.
 
         add(tab);
 
