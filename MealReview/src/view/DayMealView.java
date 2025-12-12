@@ -1,4 +1,4 @@
-package presentation;
+package view;
 
 import domain.Meal;
 
@@ -20,6 +20,8 @@ public class DayMealView extends JPanel {
     // todo Layout 예쁘게
     // ===================== 생성자 (라벨 설정) =====================
     public DayMealView() {
+        setLayout(new BorderLayout());
+
         LocalDate localDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
         String formatted = localDate.format(formatter);
@@ -37,10 +39,24 @@ public class DayMealView extends JPanel {
         };
 
         JLabel lblTitle = new JLabel("오늘의 학식");
-        JLabel lblDate = new JLabel(formatted + dowKor);
+        lblTitle.setFont(new Font("맑은 고딕", Font.BOLD, 20)); // 보기 좋게 폰트 추가
+        lblTitle.setHorizontalAlignment(JLabel.CENTER);
 
-        add(lblTitle, BorderLayout.NORTH);
-        add(lblDate);
+        JLabel lblDate = new JLabel(formatted + " " + dowKor);
+        lblDate.setHorizontalAlignment(JLabel.CENTER);
+
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
+
+        // 중앙 정렬을 위해 컴포넌트의 X축 정렬 변경
+        lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblDate.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        headerPanel.add(lblTitle);
+        headerPanel.add(lblDate);
+        headerPanel.add(Box.createVerticalStrut(10)); // 간격 추가
+
+        add(headerPanel, BorderLayout.NORTH);
     }
 
 
@@ -48,7 +64,7 @@ public class DayMealView extends JPanel {
     // ===================== 테이블 초기화 =====================
     public void initView() {
         // 셀 수정 방지
-        model = new DefaultTableModel(colNames, mealList.size()) {
+        model = new DefaultTableModel(colNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -70,7 +86,8 @@ public class DayMealView extends JPanel {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
 
-        add(table, BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(table);
+        add(scrollPane, BorderLayout.CENTER);
     }
 
 
@@ -78,7 +95,12 @@ public class DayMealView extends JPanel {
     // ===================== 데이터 설정 =====================
     public void setTable() {
         // model에 행 개수 설정
+        if (mealList == null) {
+            model.setRowCount(0);
+            return;
+        }
         model.setRowCount(mealList.size());
+
         Meal meal;
 
         String[] types = {"조식", "중식", "석식"};

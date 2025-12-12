@@ -1,4 +1,4 @@
-package presentation;
+package view;
 
 public class MealView {
     // 금일메뉴 (구분, 메뉴, 평점) 표시

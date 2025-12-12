@@ -1,6 +1,5 @@
 package repository;
 
-import domain.Meal;
 import domain.Review;
 
 import java.sql.*;
@@ -14,9 +13,11 @@ public class ReviewRepository {
         ResultSet rs;
         ArrayList<Review> reviewList = new ArrayList<>();
 
-        String sql = "SELECT * FROM review " +
+        String sql = "SELECT m.meal_id, m.meal_type, s.student_id, s.name, r.review_comment, r.rating " +
+                "FROM reviews r " +
                 "LEFT JOIN students s ON r.student_id = s.student_id " +
-                "WHERE date = ? AND type = ?";
+                "LEFT JOIN meals m ON r.meal_id = m.meal_id " +
+                "WHERE m.served_date = ? AND m.meal_type = ?";
 
         try {
             ps = con.prepareStatement(sql);
@@ -25,7 +26,7 @@ public class ReviewRepository {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                Review review = new Review(rs.getInt("meal_id"), rs.getString("student_id"), rs.getString("student_name"), rs.getString("comment"), rs.getInt("rating"));
+                Review review = new Review(rs.getInt("meal_id"), rs.getString("meal_type"), rs.getString("student_id"), rs.getString("name"), rs.getString("comment"), rs.getInt("rating"));
                 reviewList.add(review);
             }
 

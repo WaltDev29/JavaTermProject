@@ -4,10 +4,10 @@ package controller;
 
 import domain.Meal;
 import domain.Review;
-import presentation.CenterFrame;
-import presentation.DayMealView;
-import presentation.ReviewView;
-import presentation.WeekMealView;
+import view.CenterFrame;
+import view.DayMealView;
+import view.ReviewView;
+import view.WeekMealView;
 import repository.MealRepository;
 import repository.ReviewRepository;
 
@@ -50,15 +50,21 @@ public class MainController extends JFrame {
 
         tab.add("금일 메뉴",dayMealPan);
 
-        weekMealPan = new WeekMealView();
+        weekMealPan = new WeekMealView(monday,friday);
         mealList = mealRepo.getMealsbyDates(Date.valueOf(monday), Date.valueOf(friday));
         weekMealPan.setMealList(mealList);
         weekMealPan.initView();
-        weekMealPan.setMealList(mealList);
+        weekMealPan.setTable();
 
         tab.add("금주 메뉴", weekMealPan);
 
-        reviewPan = new ReviewView();
+        reviewPan = new ReviewView(today);
+        reviewList = reviewRepo.getReviews(Date.valueOf(today), "조식");
+        reviewPan.setReviewList(reviewList);
+        reviewPan.initView();
+        reviewPan.setTable();
+
+        tab.add("리뷰",reviewPan);
 
         add(tab);
 
@@ -66,7 +72,7 @@ public class MainController extends JFrame {
         setTitle("오늘의 학식");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        CenterFrame cf = new CenterFrame(500,500);
+        CenterFrame cf = new CenterFrame(800,400);
         cf.centerPoint();
         setBounds(cf.getX(),cf.getY(),cf.getFw(),cf.getFh());
 
