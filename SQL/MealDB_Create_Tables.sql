@@ -11,7 +11,7 @@ CREATE TABLE meals (
 
 CREATE TABLE foods (
     food_id INT NOT NULL,
-    name VARCHAR2(30) NOT NULL,
+    name VARCHAR2(50) NOT NULL,
     PRIMARY KEY(food_id),
     UNIQUE(name)
 );
