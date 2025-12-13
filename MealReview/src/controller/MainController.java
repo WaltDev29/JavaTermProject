@@ -39,9 +39,11 @@ public class MainController extends JFrame {
     LocalDate today = LocalDate.now().with(DayOfWeek.MONDAY);
     LocalDate monday = today.with(DayOfWeek.MONDAY);
     LocalDate friday = today.with(DayOfWeek.FRIDAY);
+    int lastReview_id;
 
     // Inner Elements
     JTabbedPane tab = new JTabbedPane(JTabbedPane.TOP);
+    JButton reviewBtn;
 
 
     public MainController() {
@@ -69,8 +71,10 @@ public class MainController extends JFrame {
         // ===================== 리뷰 메뉴 Panel =====================
         reviewPan = new ReviewView(today);
         reviewList = reviewRepo.getReviews(Date.valueOf(today));
+        lastReview_id = reviewList.get(reviewList.size() -1).getReview_id();
         reviewPan.setReviewList(reviewList);
         reviewPan.initView();
+//        reviewBtn = reviewPan.get
 
         tab.add("리뷰",reviewPan);
 

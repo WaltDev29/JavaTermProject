@@ -96,7 +96,11 @@ public class ReviewDialog extends JDialog {
         });
 
         submitBtn.addActionListener(e -> {
-            // 나중에 DB 저장
+
+            boolean isDone = true;
+
+            if (isDone) JOptionPane.showMessageDialog(this, "리뷰 등록이 완료되었습니다.");
+            else JOptionPane.showMessageDialog(this,"리뷰 등록에 실패했습니다.\n관리자에게 문의해주세요.", "리뷰 등록 실패", JOptionPane.WARNING_MESSAGE);
             dispose();
         });
     }

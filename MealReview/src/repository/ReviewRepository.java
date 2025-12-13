@@ -17,7 +17,8 @@ public class ReviewRepository {
                 "FROM reviews r " +
                 "LEFT JOIN students s ON r.student_id = s.student_id " +
                 "LEFT JOIN meals m ON r.meal_id = m.meal_id " +
-                "WHERE m.served_date = ?";
+                "WHERE m.served_date = ?" +
+                "ORDER BY review_id";
 
         try {
             ps = con.prepareStatement(sql);
@@ -25,7 +26,7 @@ public class ReviewRepository {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                Review review = new Review(rs.getInt("meal_id"), rs.getString("meal_type"), rs.getString("student_id"), rs.getString("name"), rs.getString("review_comment"), rs.getInt("rating"));
+                Review review = new Review(rs.getInt("review_id"),rs.getInt("meal_id"), rs.getString("meal_type"), rs.getString("student_id"), rs.getString("name"), rs.getString("review_comment"), rs.getInt("rating"));
                 reviewList.add(review);
             }
 
@@ -46,4 +47,31 @@ public class ReviewRepository {
         return reviewList;
     }
 
+
+
+    public void insertReview(int meal_id, String student_id, String comment, int rating) {
+        Connection con = JDBCConnector.getConnection();
+        PreparedStatement ps;
+        ResultSet rs;
+
+        String sql = "INSERT INTO reviews (review_id, meal_id, student_id, rating, review_comment)\n" +
+                "VALUES(?, ?, ?, ?, ?)";
+
+        try {
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+        }
+        catch (SQLException e) {
+            System.out.println("====== ERROR ======\n" + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        try {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+            if (con != null) con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

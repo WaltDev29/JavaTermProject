@@ -9,13 +9,18 @@ public class Review {
     private String comment;
     private int rating;
 
-    public Review(int meal_id, String type, String student_id, String student_name, String comment, int rating) {
+    public Review(int review_id, int meal_id, String type, String student_id, String student_name, String comment, int rating) {
+        this.review_id = review_id;
         this.meal_id = meal_id;
         this.type = type;
         this.student_id = student_id;
         this.student_name = student_name;
         this.comment = comment;
         this.rating = rating;
+    }
+
+    public int getReview_id() {
+        return review_id;
     }
 
     public String getType() {

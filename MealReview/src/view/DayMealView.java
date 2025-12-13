@@ -18,6 +18,7 @@ public class DayMealView extends JPanel {
     private ArrayList<Meal> mealList;
     private String[] colNames = {"구분", "메뉴", "평점"};
 
+    private ArrayList<JButton> reviewBtns;
     private JButton breakfastBtn;
     private JButton lunchBtn;
     private JButton dinnerBtn;
@@ -113,6 +114,7 @@ public class DayMealView extends JPanel {
         lunchBtn.addActionListener(e -> openReviewDialog(mealList.get(1).getMealId(), "중식"));
         dinnerBtn.addActionListener(e -> openReviewDialog(mealList.get(2).getMealId(), "석식"));
 
+//        todo 여기 버튼 리스트화 하는 것부터 재개. (controller에 버튼 리스너 추가해야됨.)
 
         buttonPan.add(breakfastBtn);
         buttonPan.add(lunchBtn);
