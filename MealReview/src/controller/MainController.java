@@ -17,6 +17,10 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/* todo
+    1. 로그인 기능 구현
+    2. 리뷰 작성 기능 구현*/
+
 public class MainController extends JFrame {
     // View Pans
     DayMealView dayMealPan;
@@ -30,7 +34,9 @@ public class MainController extends JFrame {
     ArrayList<Review> reviewList;
     
     // 변수
-    LocalDate today = LocalDate.now();
+//    LocalDate today = LocalDate.now();
+    // 방학기간은 학식이 없으니, 아래의 문장을 실행하여 테스트합니다.
+    LocalDate today = LocalDate.now().with(DayOfWeek.MONDAY);
     LocalDate monday = today.with(DayOfWeek.MONDAY);
     LocalDate friday = today.with(DayOfWeek.FRIDAY);
 
@@ -41,15 +47,17 @@ public class MainController extends JFrame {
     public MainController() {
         mealRepo = new MealRepository();
         reviewRepo = new ReviewRepository();
-        mealList = mealRepo.getMealsbyDate(Date.valueOf(LocalDate.now()));
 
-        dayMealPan = new DayMealView();
+        // ===================== 금일 메뉴 Panel =====================
+        mealList = mealRepo.getMealsbyDate(Date.valueOf(today));
+        dayMealPan = new DayMealView(this);
         dayMealPan.setMealList(mealList);
         dayMealPan.initView();
         dayMealPan.setTable();
 
         tab.add("금일 메뉴",dayMealPan);
 
+        // ===================== 금주 메뉴 Panel =====================
         weekMealPan = new WeekMealView(monday,friday);
         mealList = mealRepo.getMealsbyDates(Date.valueOf(monday), Date.valueOf(friday));
         weekMealPan.setMealList(mealList);
@@ -58,11 +66,11 @@ public class MainController extends JFrame {
 
         tab.add("금주 메뉴", weekMealPan);
 
+        // ===================== 리뷰 메뉴 Panel =====================
         reviewPan = new ReviewView(today);
-        reviewList = reviewRepo.getReviews(Date.valueOf(today), "조식");
+        reviewList = reviewRepo.getReviews(Date.valueOf(today));
         reviewPan.setReviewList(reviewList);
         reviewPan.initView();
-        reviewPan.setTable();
 
         tab.add("리뷰",reviewPan);
 

@@ -14,10 +14,13 @@ import java.util.ArrayList;
 public class ReviewView extends JPanel{
     private JTable table;
     private DefaultTableModel model;
+    private JTabbedPane tab;
+
     private ArrayList<Review> reviewList;
     private ArrayList<Review> reviewList_breakfast;
     private ArrayList<Review> reviewList_lunch;
     private ArrayList<Review> reviewList_dinner;
+
     private String[] colNames = {"이름", "리뷰", "평점"};
 
     // todo Layout 예쁘게
@@ -60,11 +63,6 @@ public class ReviewView extends JPanel{
         headerPan.add(lblDate);
         headerPan.add(Box.createVerticalStrut(10)); // 간격 추가
 
-        JPanel tablePan = new JPanel();
-        add(tablePan, BorderLayout.CENTER);
-        JTabbedPane tab = new JTabbedPane(JTabbedPane.TOP);
-        add(tab);
-
         add(headerPan, BorderLayout.NORTH);
     }
 
@@ -96,40 +94,71 @@ public class ReviewView extends JPanel{
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
 
+        table.getColumnModel().getColumn(1).setCellRenderer(new WordWrapCellRenderer());
+
         // 스크롤바 설정
         JScrollPane scrollPane = new JScrollPane(table);
 
+        tab = new JTabbedPane(JTabbedPane.TOP);
+
+        tab.addTab("조식", new JPanel());
+        tab.addTab("중식", new JPanel());
+        tab.addTab("석식", new JPanel());
+
+        tab.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+            @Override
+            protected int calculateTabAreaHeight(int tabPlacement,
+                                                 int runCount,
+                                                 int maxTabHeight) {
+                return maxTabHeight;
+            }
+        });
+
+        add(tab, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
+
+        setTable(reviewList_breakfast);
+
+        tab.addChangeListener(e -> updateTableByTab());
     }
 
 
+    
+    // ===================== Tab 클릭 메서드 =====================
+    private void updateTableByTab() {
+        int idx = tab.getSelectedIndex();
+
+        if (idx == 0) setTable(reviewList_breakfast);
+        else if (idx == 1) setTable(reviewList_lunch);
+        else setTable(reviewList_dinner);
+    }
+    
+    
 
     // ===================== 데이터 설정 =====================
-    public void setTable() {
-        // model에 행 개수 설정
-        model.setRowCount(reviewList.size());
-        Review review;
+    // 테이블 설정
+    private void setTable(ArrayList<Review> list) {
+        model.setRowCount(list.size());
 
-        for (int i = 0; i < reviewList.size(); i++) {
-            review = reviewList.get(i);
-            model.setValueAt(review.getStudent_name(), i, 0);
-            model.setValueAt(review.getComment(), i, 1);
-            model.setValueAt(review.getRating(), i, 2);
+        for (int i = 0; i < list.size(); i++) {
+            Review r = list.get(i);
+            model.setValueAt(r.getStudent_name(), i, 0);
+            model.setValueAt(r.getComment(), i, 1);
+            model.setValueAt(r.getRating(), i, 2);
         }
     }
-
-
-
+    
+    // List 설정
     public void setReviewList(ArrayList<Review> reviewList) {
         this.reviewList = reviewList;
 
-        this.reviewList_breakfast.clear();
-        this.reviewList_lunch.clear();
-        this.reviewList_dinner.clear();
+        this.reviewList_breakfast = new ArrayList<Review>();
+        this.reviewList_lunch = new ArrayList<Review>();
+        this.reviewList_dinner = new ArrayList<Review>();
 
         for (Review r : reviewList) {
-            if (r.getType() == "조식") reviewList_breakfast.add(r);
-            else if (r.getType() == "중식") reviewList_lunch.add(r);
+            if (r.getType().equals("조식")) reviewList_breakfast.add(r);
+            else if (r.getType().equals("중식")) reviewList_lunch.add(r);
             else reviewList_dinner.add(r);
         }
     }

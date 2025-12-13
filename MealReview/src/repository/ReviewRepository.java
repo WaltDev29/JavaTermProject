@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class ReviewRepository {
 
-    public ArrayList<Review> getReviews(Date date, String type) {
+    public ArrayList<Review> getReviews(Date date) {
         Connection con = JDBCConnector.getConnection();
         PreparedStatement ps;
         ResultSet rs;
@@ -17,16 +17,15 @@ public class ReviewRepository {
                 "FROM reviews r " +
                 "LEFT JOIN students s ON r.student_id = s.student_id " +
                 "LEFT JOIN meals m ON r.meal_id = m.meal_id " +
-                "WHERE m.served_date = ? AND m.meal_type = ?";
+                "WHERE m.served_date = ?";
 
         try {
             ps = con.prepareStatement(sql);
             ps.setDate(1, date);
-            ps.setString(2, type);
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                Review review = new Review(rs.getInt("meal_id"), rs.getString("meal_type"), rs.getString("student_id"), rs.getString("name"), rs.getString("comment"), rs.getInt("rating"));
+                Review review = new Review(rs.getInt("meal_id"), rs.getString("meal_type"), rs.getString("student_id"), rs.getString("name"), rs.getString("review_comment"), rs.getInt("rating"));
                 reviewList.add(review);
             }
 

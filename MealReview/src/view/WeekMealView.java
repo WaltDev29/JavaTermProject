@@ -62,7 +62,7 @@ public class WeekMealView extends JPanel {
         };
 
         table = new JTable(model);
-        table.setRowHeight(40);
+        table.setRowHeight(51);
 
         // 테이블 컬럼 너비 설정
         table.getColumnModel().getColumn(0).setPreferredWidth(200);

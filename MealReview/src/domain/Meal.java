@@ -4,7 +4,6 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Meal {
@@ -54,6 +53,10 @@ public class Meal {
 
     public void addMenu(String menu) {
         menus.add(menu);
+    }
+
+    public int getMealId() {
+        return mealId;
     }
 
     public Date getDate() {

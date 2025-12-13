@@ -59,7 +59,7 @@ CREATE TABLE reviews (
     created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
     PRIMARY KEY(review_id),
     FOREIGN KEY(meal_id) REFERENCES meals(meal_id) ON DELETE SET NULL,
-    FOREIGN KEY(student_id) REFERENCES students(student_id) ON DELETE SET NULL,
+    FOREIGN KEY(student_id) REFERENCES accounts(student_id) ON DELETE SET NULL,
     UNIQUE(meal_id, student_id),
     CONSTRAINT check_rating CHECK(rating BETWEEN 1 AND 10)
 );
