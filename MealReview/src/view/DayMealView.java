@@ -6,10 +6,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class DayMealView extends JPanel {
@@ -19,44 +16,21 @@ public class DayMealView extends JPanel {
     private String[] colNames = {"구분", "메뉴", "평점"};
 
     private ArrayList<JButton> reviewBtns;
-    private JButton breakfastBtn;
-    private JButton lunchBtn;
-    private JButton dinnerBtn;
 
-    private JFrame parentFrame;
-    private String date;
-    private String dow;
-
-    // todo 리뷰 취소 버튼 구현 (with ask dialog)
     // ===================== 생성자 (라벨 설정) =====================
-    public DayMealView(JFrame parentFrame) {
-        this.parentFrame = parentFrame;
-
+    public DayMealView(String date, String dow) {
         setLayout(new BorderLayout());
 
-        LocalDate localDate = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
-        this.date = localDate.format(formatter);
-
-        DayOfWeek dowEng = localDate.getDayOfWeek();
-
-        this.dow = switch (dowEng) {
-            case MONDAY -> "월요일";
-            case TUESDAY -> "화요일";
-            case WEDNESDAY -> "수요일";
-            case THURSDAY -> "목요일";
-            case FRIDAY -> "금요일";
-            case SATURDAY -> "토요일";
-            case SUNDAY -> "일요일";
-        };
-
+        // title Label
         JLabel lblTitle = new JLabel("오늘의 학식");
-        lblTitle.setFont(new Font("맑은 고딕", Font.BOLD, 20)); // 보기 좋게 폰트 추가
-        lblTitle.setHorizontalAlignment(JLabel.CENTER);
+        lblTitle.setFont(new Font("맑은 고딕", Font.BOLD, 20)); // 폰트, size 설정
+        lblTitle.setHorizontalAlignment(JLabel.CENTER); // 가운데 정렬
 
+        // 날짜 Label
         JLabel lblDate = new JLabel(date + " " + dow);
-        lblDate.setHorizontalAlignment(JLabel.CENTER);
+        lblDate.setHorizontalAlignment(JLabel.CENTER); // 가운데 정렬
 
+        // Label 넣을 Panel 생성
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
 
@@ -64,6 +38,7 @@ public class DayMealView extends JPanel {
         lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblDate.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // 요소 배치
         headerPanel.add(lblTitle);
         headerPanel.add(lblDate);
         headerPanel.add(Box.createVerticalStrut(10)); // 간격 추가
@@ -75,6 +50,7 @@ public class DayMealView extends JPanel {
 
     // ===================== 테이블 초기화 =====================
     public void initView() {
+        // table 넣을 Panel 생성
         JPanel centerPan = new JPanel(new BorderLayout());
 
         // 셀 수정 방지
@@ -85,7 +61,10 @@ public class DayMealView extends JPanel {
             }
         };
 
+        // table 초기화
         table = new JTable(model);
+        
+        // row 높이 설정
         table.setRowHeight(85);
 
         // 테이블 컬럼 너비 설정
@@ -93,35 +72,39 @@ public class DayMealView extends JPanel {
         table.getColumnModel().getColumn(1).setPreferredWidth(250);
         table.getColumnModel().getColumn(2).setPreferredWidth(40);
 
+        // 텍스트 가운데 정렬
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER); // 가운데 정렬
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 
         for (int i = 0; i < table.getColumnCount(); i++) {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
 
+        // ScrollPane 설정
         JScrollPane scrollPane = new JScrollPane(table);
 
+
+
+        // ===================== 리뷰 버튼 초기화 =====================
+        // 버튼 담음 Panel 생성
         JPanel buttonPan = new JPanel();
-        buttonPan.setBorder(BorderFactory.createEmptyBorder(30, 10, 20, 10));
-        buttonPan.setLayout(new GridLayout(3, 1, 30, 30));
+        buttonPan.setBorder(BorderFactory.createEmptyBorder(30, 10, 20, 10));   // margin 설정
+        buttonPan.setLayout(new GridLayout(3, 1, 30, 30));  // 버튼 배치 설정
 
-        breakfastBtn = new JButton("리뷰하기");
-        lunchBtn = new JButton("리뷰하기");
-        dinnerBtn = new JButton("리뷰하기");
+        // 버튼 생성
+        reviewBtns = new ArrayList<>();
+        for (int i=0; i<3; i++) {
+            JButton btn = new JButton("리뷰하기");
+            reviewBtns.add(btn);
+            buttonPan.add(btn);
+        }
 
-        breakfastBtn.addActionListener(e -> openReviewDialog(mealList.get(0).getMealId(), "조식"));
-        lunchBtn.addActionListener(e -> openReviewDialog(mealList.get(1).getMealId(), "중식"));
-        dinnerBtn.addActionListener(e -> openReviewDialog(mealList.get(2).getMealId(), "석식"));
-
-//        todo 여기 버튼 리스트화 하는 것부터 재개. (controller에 버튼 리스너 추가해야됨.)
-
-        buttonPan.add(breakfastBtn);
-        buttonPan.add(lunchBtn);
-        buttonPan.add(dinnerBtn);
-
+        // 버튼 visible 설정
         updateButtonVisibility();
 
+
+
+        // 요소 배치
         centerPan.add(scrollPane, BorderLayout.CENTER);
         centerPan.add(buttonPan, BorderLayout.EAST);
 
@@ -139,26 +122,19 @@ public class DayMealView extends JPanel {
         LocalTime dinnerTime = LocalTime.of(17, 30);
 
         // 버튼 invisible
-        breakfastBtn.setVisible(false);
-        lunchBtn.setVisible(false);
-        dinnerBtn.setVisible(false);
+        for (int i=0; i<3; i++) {
+            reviewBtns.get(i).setVisible(false);
+        }
 
         // 버튼 visible
         if (now.isBefore(breakfastTime)) return;
-        breakfastBtn.setVisible(true);
+        reviewBtns.get(0).setVisible(true);
 
         if (now.isBefore(lunchTime)) return;
-        lunchBtn.setVisible(true);
+        reviewBtns.get(1).setVisible(true);
 
         if (now.isBefore(dinnerTime)) return;
-        dinnerBtn.setVisible(true);
-    }
-
-
-    // ===================== 버튼 클릭 메서드 =====================
-    private void openReviewDialog(int meal_id, String mealType) {
-        ReviewDialog dialog = new ReviewDialog(parentFrame, meal_id, date, dow,mealType);
-        dialog.setVisible(true);
+        reviewBtns.get(2).setVisible(true);
     }
 
 
@@ -166,18 +142,14 @@ public class DayMealView extends JPanel {
     // ===================== 데이터 설정 =====================
     public void setTable() {
         // model에 행 개수 설정
-        if (mealList == null) {
-            model.setRowCount(0);
-            return;
-        }
-        model.setRowCount(mealList.size());
+        if (mealList == null) return;
 
-        Meal meal;
+        model.setRowCount(mealList.size());
 
         String[] types = {"조식", "중식", "석식"};
 
         for (int i = 0; i < mealList.size(); i++) {
-            meal = mealList.get(i);
+            Meal meal = mealList.get(i);
             model.setValueAt(types[i], i, 0);
             model.setValueAt(String.join(", ", meal.getMenus()), i, 1);
             // todo 평점 넣는 로직 구현
@@ -186,8 +158,12 @@ public class DayMealView extends JPanel {
     }
 
 
-
+    // ===================== Getter & Setter =====================
     public void setMealList(ArrayList<Meal> mealList) {
         this.mealList = mealList;
+    }
+
+    public ArrayList<JButton> getReviewBtns() {
+        return reviewBtns;
     }
 }

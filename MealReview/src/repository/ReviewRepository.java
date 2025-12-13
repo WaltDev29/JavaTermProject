@@ -13,7 +13,7 @@ public class ReviewRepository {
         ResultSet rs;
         ArrayList<Review> reviewList = new ArrayList<>();
 
-        String sql = "SELECT m.meal_id, m.meal_type, s.student_id, s.name, r.review_comment, r.rating " +
+        String sql = "SELECT r.review_id, m.meal_id, m.meal_type, s.student_id, s.name, r.review_comment, r.rating " +
                 "FROM reviews r " +
                 "LEFT JOIN students s ON r.student_id = s.student_id " +
                 "LEFT JOIN meals m ON r.meal_id = m.meal_id " +
@@ -49,20 +49,27 @@ public class ReviewRepository {
 
 
 
-    public void insertReview(int meal_id, String student_id, String comment, int rating) {
+    public boolean insertReview(int review_id, int meal_id, String student_id, String comment, int rating) {
         Connection con = JDBCConnector.getConnection();
         PreparedStatement ps;
         ResultSet rs;
+        boolean isDone = true;
 
-        String sql = "INSERT INTO reviews (review_id, meal_id, student_id, rating, review_comment)\n" +
+        String sql = "INSERT INTO reviews (review_id, meal_id, student_id, review_comment, rating)\n" +
                 "VALUES(?, ?, ?, ?, ?)";
 
         try {
             ps = con.prepareStatement(sql);
+            ps.setInt(1,  review_id);
+            ps.setInt(2, meal_id);
+            ps.setString(3,student_id);
+            ps.setString(4, comment);
+            ps.setInt(5,rating);
             rs = ps.executeQuery();
         }
         catch (SQLException e) {
             System.out.println("====== ERROR ======\n" + e.getMessage());
+            isDone = false;
             throw new RuntimeException(e);
         }
 
@@ -73,5 +80,7 @@ public class ReviewRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return isDone;
     }
 }
