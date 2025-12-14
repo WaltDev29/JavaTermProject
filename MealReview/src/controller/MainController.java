@@ -8,6 +8,7 @@ import repository.MealRepository;
 import repository.ReviewRepository;
 
 import javax.swing.*;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -18,11 +19,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 /* todo
+    1. 학식 데이터 자동으로 가져오는 로직 구현    
     2. 리뷰 작성 글자 수 제한
-    3. 리뷰 평점 별 기호로 표시하기 (이것부터!)
     5. 이미 리뷰했는지 확인 후 리뷰 수정 버튼으로 수정 (dialog안에 삭제버튼도 추가)
-    6. Frame resizable false 설정
-    7. table resizable false, selectable false 설정
     8. 학식 갖고 올 때 비어있는 걸 어떻게 처리할 건지.
     (테이블에 날짜, 구분을 지정해놓고 거기에 맞춰 넣게 할 건지, 아니면 갖고 올 때 빈 학식 객체를 만들 건지)
     */
@@ -75,16 +74,18 @@ public class MainController extends JFrame {
     // ID 변수
     String student_id = "";
     int lastReview_id;  // 리뷰 추가용 id
+    boolean[] isReviewed = {false, false, false};
 
 
+    // ===================== 생성자 =====================
     public MainController() {
         accountRepo = new AccountRepository();
         initLoginDialog();
     }
 
 
-
-    // ===================== Login Dialog 초기화 =====================
+    // ===================== Frame 초기화 =====================
+    // Login Dialog 초기화
     private void initLoginDialog() {
         loginDialog = new SignInView(this);
 
@@ -103,17 +104,15 @@ public class MainController extends JFrame {
 
         signInBtn.addActionListener(e -> handleSignIn());
         signUpBtn.addActionListener(e ->
-                {
-                    loginDialog.dispose();
-                    initSignUpDialog();
-                });
+        {
+            loginDialog.dispose();
+            initSignUpDialog();
+        });
 
         loginDialog.setVisible(true);
     }
 
-
-
-    // ===================== SignUp Dialog 초기화 =====================
+    // SignUp Dialog 초기화
     private void initSignUpDialog() {
         signUpDialog = new SignUpView(this);
 
@@ -139,13 +138,14 @@ public class MainController extends JFrame {
         signUpDialog.setVisible(true);
     }
 
-
-
-    // ===================== Main Frame 초기화 =====================
+    // Main Frame 초기화
     private void initFrame() {
         // Repositories 초기화
         mealRepo = new MealRepository();
         reviewRepo = new ReviewRepository();
+
+        isReviewed = reviewRepo.getReviewById(student_id, Date.valueOf(today));
+        System.out.printf("%s %s %s", isReviewed[0], isReviewed[1], isReviewed[2]);
 
         // ===================== 금일 메뉴 Panel =====================
         dayMealList = mealRepo.getMealsbyDate(Date.valueOf(today));
@@ -156,9 +156,8 @@ public class MainController extends JFrame {
 
         // 리뷰 버튼 클릭 이벤트 설정
         reviewBtns = dayMealPan.getReviewBtns();
-        reviewBtns.get(0).addActionListener(e -> openReviewDialog(dayMealList.get(0).getMealId(), "조식"));
-        reviewBtns.get(1).addActionListener(e -> openReviewDialog(dayMealList.get(1).getMealId(), "중식"));
-        reviewBtns.get(2).addActionListener(e -> openReviewDialog(dayMealList.get(2).getMealId(), "석식"));
+
+        initReviewBtn();
 
         tab.add("금일 메뉴", dayMealPan);
 
@@ -186,6 +185,7 @@ public class MainController extends JFrame {
         // ===================== JFrame Layout 설정 =====================
         setTitle("오늘의 학식");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setResizable(false);
 
         CenterFrame cf = new CenterFrame(800, 400);
         cf.centerPoint();
@@ -196,6 +196,50 @@ public class MainController extends JFrame {
         setVisible(true);
     }
 
+
+    // ===================== 테이블 초기화 메서드 =====================
+    private void initDatas() {
+        // 금일 메뉴 data
+        dayMealList = mealRepo.getMealsbyDate(Date.valueOf(today));
+        dayMealPan.setMealList(dayMealList);
+        dayMealPan.setTable();
+
+        // 리뷰 data
+        reviewList = reviewRepo.getReviews(Date.valueOf(today));
+        lastReview_id = reviewList.get(reviewList.size() - 1).getReview_id();
+        reviewPan.setReviewList(reviewList);
+        reviewPan.updateTableByTab();
+
+        // 리뷰 여부 data
+        isReviewed = reviewRepo.getReviewById(student_id, Date.valueOf(today));
+    }
+
+
+    // ===================== 리뷰 버튼 초기화 메서드 =====================
+    private void initReviewBtn() {
+        String[] types = {"조식", "중식", "석식"};
+
+        for (int i = 0; i < isReviewed.length; i++) {
+            // 람다식을 위한 변수
+            int meal_id = dayMealList.get(i).getMealId();
+            String type = types[i];
+
+            // 기존 리스너 제거
+            for (ActionListener al : reviewBtns.get(i).getActionListeners()) {
+                reviewBtns.get(i).removeActionListener(al);
+            }
+            
+            // text 설정 및 리스너 추가
+            if (isReviewed[i]) {
+                reviewBtns.get(i).addActionListener(e -> openReviewDialog(meal_id, type));
+                reviewBtns.get(i).setText("리뷰 수정");
+            }
+            else {
+                reviewBtns.get(i).addActionListener(e -> openReviewDialog(meal_id, type));
+                reviewBtns.get(i).setText("리뷰 작성");
+            }
+        }
+    }
 
 
     // ===================== Date 변환 메서드 =====================
@@ -220,7 +264,8 @@ public class MainController extends JFrame {
     }
 
 
-
+    // ===================== 버튼 클릭 메서드 =====================
+    // 로그인 버튼 클릭 메서드
     private void handleSignIn() {
         if (accountRepo.checkAccount(tfLoginId.getText().strip(), tfLoginPw.getText().strip())) {
             JOptionPane.showMessageDialog(loginDialog, "로그인되었습니다.", "로그인 성공", JOptionPane.PLAIN_MESSAGE);
@@ -232,8 +277,7 @@ public class MainController extends JFrame {
         }
     }
 
-
-
+    // 회원가입 버튼 클릭 메서드
     private void submitAccount() {
         if (tfSignUpId.getText().strip().isEmpty() || tfSignUpPw.getText().strip().isEmpty() || tfSignUpPwCheck.getText().strip().isEmpty()) {
             JOptionPane.showMessageDialog(signUpDialog, "모든 정보를 입력해주세요", "회원가입 오류", JOptionPane.WARNING_MESSAGE);
@@ -251,13 +295,10 @@ public class MainController extends JFrame {
             JOptionPane.showMessageDialog(signUpDialog, "회원가입이 정상적으로 완료되었습니다.", "회원가입 완료", JOptionPane.PLAIN_MESSAGE);
             signUpDialog.dispose();
             initLoginDialog();
-        }
-        else JOptionPane.showMessageDialog(signUpDialog, result, "회원가입 오류", JOptionPane.WARNING_MESSAGE);
+        } else JOptionPane.showMessageDialog(signUpDialog, result, "회원가입 오류", JOptionPane.WARNING_MESSAGE);
     }
 
-
-    // ===================== 리뷰 버튼 클릭 메서드 =====================
-    // 리뷰 Dialog 열기 메서드
+    // 리뷰하기 버튼 클릭 메서드
     private void openReviewDialog(int meal_id, String mealType) {
         reviewDialog = new ReviewDialog(this, formatDate(today), convertKorDow(today), mealType);
         reviewSubmitBtn = reviewDialog.getSubmitBtn();
@@ -265,12 +306,38 @@ public class MainController extends JFrame {
         reviewDialog.setVisible(true);
     }
 
+    // 리뷰 수정 Dialog // todo 여기부터 (update용으로 변경하고 update 메서드 추가해서 만들기)
+    private void openUpdateReviewDialog(int meal_id, String mealType) {
+        reviewDialog = new ReviewDialog(this, formatDate(today), convertKorDow(today), mealType);
+        reviewSubmitBtn = reviewDialog.getSubmitBtn();
+        reviewSubmitBtn.setText("수정");
+        reviewSubmitBtn.addActionListener(e -> updateReview(meal_id, reviewDialog.getComment(), reviewDialog.getRating()));
+        reviewDialog.setVisible(true);
+    }
+
     // 리뷰 등록 버튼 클릭 메서드
     private void submitReview(int meal_id, String comment, int rating) {
         boolean isDone = reviewRepo.insertReview(lastReview_id + 1, meal_id, student_id, comment, rating);
 
-        if (isDone) JOptionPane.showMessageDialog(this, "리뷰 등록이 완료되었습니다.");
-        else JOptionPane.showMessageDialog(this, "리뷰 등록에 실패했습니다.\n관리자에게 문의해주세요.", "리뷰 등록 실패", JOptionPane.WARNING_MESSAGE);
+        if (isDone) {
+            JOptionPane.showMessageDialog(this, "리뷰 등록이 완료되었습니다.");
+            initDatas();
+            initReviewBtn();
+        } else
+            JOptionPane.showMessageDialog(this, "리뷰 등록에 실패했습니다.\n관리자에게 문의해주세요.", "리뷰 등록 실패", JOptionPane.WARNING_MESSAGE);
+
+        reviewDialog.dispose();
+    }
+
+    private void updateReview(int meal_id, String comment, int rating) {
+        boolean isDone = reviewRepo.insertReview(lastReview_id + 1, meal_id, student_id, comment, rating);
+
+        if (isDone) {
+            JOptionPane.showMessageDialog(this, "리뷰 등록이 완료되었습니다.");
+            initDatas();
+            initReviewBtn();
+        } else
+            JOptionPane.showMessageDialog(this, "리뷰 등록에 실패했습니다.\n관리자에게 문의해주세요.", "리뷰 등록 실패", JOptionPane.WARNING_MESSAGE);
 
         reviewDialog.dispose();
     }

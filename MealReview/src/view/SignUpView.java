@@ -18,6 +18,7 @@ public class SignUpView extends JDialog{
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(300, 400);
         setLocationRelativeTo(parent);
+        setResizable(false);
         setLayout(new BorderLayout());
 
         // Label 설정

@@ -17,6 +17,7 @@ public class SignInView extends JDialog {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(300, 280);
         setLocationRelativeTo(parent);
+        setResizable(false);
         setLayout(new BorderLayout());
 
         // Label 설정

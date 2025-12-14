@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 public class ReviewRepository {
 
+    // ===================== SELECT 메서드 =====================
+    // get Reiviews
     public ArrayList<Review> getReviews(Date date) {
         Connection con = JDBCConnector.getConnection();
         PreparedStatement ps;
@@ -47,8 +49,50 @@ public class ReviewRepository {
         return reviewList;
     }
 
+    // getReviewById
+    public boolean[] getReviewById(String student_id, Date date) {
+        Connection con = JDBCConnector.getConnection();
+        PreparedStatement ps;
+        ResultSet rs;
+        boolean[] isReviewed = {false, false, false};
+
+        String sql = "SELECT m.meal_type " +
+                "FROM reviews r " +
+                "LEFT JOIN meals m ON r.meal_id = m.meal_id " +
+                "WHERE r.student_id = ? AND m.served_date = ?";
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setString(1, student_id);
+            ps.setDate(2, date);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                if (rs.getString("meal_type").equals("조식")) isReviewed[0] = true;
+                else if (rs.getString("meal_type").equals("중식")) isReviewed[1] = true;
+                else isReviewed[2] = true;
+            }
+
+        }
+        catch (SQLException e) {
+            System.out.println("====== ERROR ======\n" + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        try {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+            if (con != null) con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return isReviewed;
+    }
 
 
+
+    // ===================== INSERT 메서드 =====================
     public boolean insertReview(int review_id, int meal_id, String student_id, String comment, int rating) {
         Connection con = JDBCConnector.getConnection();
         PreparedStatement ps;

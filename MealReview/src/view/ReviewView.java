@@ -62,6 +62,13 @@ public class ReviewView extends JPanel{
         };
 
         table = new JTable(model);
+
+        table.setRowSelectionAllowed(false);
+        table.setColumnSelectionAllowed(false);
+        table.setCellSelectionEnabled(false);
+        table.setFocusable(false);
+        table.getTableHeader().setReorderingAllowed(false);
+
         table.setRowHeight(20);
 
         // 테이블 컬럼 너비 설정
@@ -77,7 +84,7 @@ public class ReviewView extends JPanel{
         table.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
 
         // 줄바꿈 설정
-        table.getColumnModel().getColumn(1).setCellRenderer(new WordWrapCellRenderer());
+        table.getColumnModel().getColumn(1).setCellRenderer(new WordWrapCellRenderer(0));
 
         // 스크롤바 설정
         JScrollPane scrollPane = new JScrollPane(table);
@@ -114,7 +121,7 @@ public class ReviewView extends JPanel{
 
     
     // ===================== Tab 클릭 메서드 =====================
-    private void updateTableByTab() {
+    public void updateTableByTab() {
         int idx = tab.getSelectedIndex();
 
         if (idx == 0) setTable(reviewList_breakfast);

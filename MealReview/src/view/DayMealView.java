@@ -5,6 +5,7 @@ import domain.Meal;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ public class DayMealView extends JPanel {
     private String[] colNames = {"구분", "메뉴", "평점"};
 
     private ArrayList<JButton> reviewBtns;
+
+    private String[] ratingStar = {"☆", "★","★☆","★★","★★☆","★★★","★★★☆","★★★★","★★★★☆","★★★★★"};
 
     // ===================== 생성자 (라벨 설정) =====================
     public DayMealView(String date, String dow) {
@@ -63,13 +66,20 @@ public class DayMealView extends JPanel {
 
         // table 초기화
         table = new JTable(model);
-        
+
+        table.setRowSelectionAllowed(false);
+        table.setColumnSelectionAllowed(false);
+        table.setCellSelectionEnabled(false);
+        table.setFocusable(false);
+        table.getTableHeader().setReorderingAllowed(false);
+
+
         // row 높이 설정
         table.setRowHeight(85);
 
         // 테이블 컬럼 너비 설정
-        table.getColumnModel().getColumn(0).setPreferredWidth(15);
-        table.getColumnModel().getColumn(1).setPreferredWidth(250);
+        table.getColumnModel().getColumn(0).setPreferredWidth(10);
+        table.getColumnModel().getColumn(1).setPreferredWidth(320);
         table.getColumnModel().getColumn(2).setPreferredWidth(40);
 
         // 텍스트 가운데 정렬
@@ -79,6 +89,24 @@ public class DayMealView extends JPanel {
         for (int i = 0; i < table.getColumnCount(); i++) {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
+
+        // 평점 컬럼 Font Size 조정
+        TableColumn column = table.getColumnModel().getColumn(2);
+        column.setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int column) {
+
+                Component c = super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+
+                c.setFont(c.getFont().deriveFont(Font.BOLD, 18f)); // 폰트 크기
+                setHorizontalAlignment(SwingConstants.CENTER);     // 가운데 정렬
+
+                return c;
+            }
+        });
 
         // ScrollPane 설정
         JScrollPane scrollPane = new JScrollPane(table);
@@ -94,7 +122,7 @@ public class DayMealView extends JPanel {
         // 버튼 생성
         reviewBtns = new ArrayList<>();
         for (int i=0; i<3; i++) {
-            JButton btn = new JButton("리뷰하기");
+            JButton btn = new JButton("리뷰 작성");
             reviewBtns.add(btn);
             buttonPan.add(btn);
         }
@@ -152,7 +180,7 @@ public class DayMealView extends JPanel {
             Meal meal = mealList.get(i);
             model.setValueAt(types[i], i, 0);
             model.setValueAt(String.join(", ", meal.getMenus()), i, 1);
-            model.setValueAt(meal.getRating(), i, 2);
+            model.setValueAt(ratingStar[meal.getRating()-1], i, 2);
         }
     }
 

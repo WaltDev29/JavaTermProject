@@ -43,7 +43,6 @@ public class WeekMealView extends JPanel {
     }
 
 
-
     // ===================== 테이블 초기화 =====================
     public void initView() {
         // 셀 수정 방지
@@ -53,8 +52,16 @@ public class WeekMealView extends JPanel {
                 return false;
             }
         };
-
+        
         table = new JTable(model);
+        // 테이블 클릭 방지
+        table.setRowSelectionAllowed(false);
+        table.setColumnSelectionAllowed(false);
+        table.setCellSelectionEnabled(false);
+        table.setFocusable(false);
+        table.getTableHeader().setReorderingAllowed(false);
+
+        // 테이블 행 높이 설정
         table.setRowHeight(51);
 
         // 테이블 컬럼 너비 설정
@@ -71,7 +78,7 @@ public class WeekMealView extends JPanel {
 
         // 자동 줄바꿈 설정
         for (int i = 1; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(new WordWrapCellRenderer());
+            table.getColumnModel().getColumn(i).setCellRenderer(new WordWrapCellRenderer(0));
         }
 
         // 스크롤바 설정
@@ -81,12 +88,11 @@ public class WeekMealView extends JPanel {
     }
 
 
-
     // ===================== 데이터 설정 =====================
     public void setTable() {
         if (mealList == null) return;
 
-        model.setRowCount(mealList.size()/3);
+        model.setRowCount(mealList.size() / 3);
 
         for (int i = 0; i < mealList.size(); i++) {
             Meal meal = mealList.get(i);
@@ -96,29 +102,6 @@ public class WeekMealView extends JPanel {
 
 //        resizeRowHeights();
     }
-
-
-
-    // Thank you GPT // todo 이거 지울지 결정
-//    private void resizeRowHeights() {
-//        if (table == null || model.getRowCount() == 0) return;
-//
-//        for (int row = 0; row < model.getRowCount(); row++) {
-//            int maxPreferredHeight = table.getRowHeight(); // 기본 높이로 시작
-//
-//            for (int col = 0; col < table.getColumnCount(); col++) {
-//                Component component = table.prepareRenderer(table.getCellRenderer(row, col), row, col);
-//                int rendererHeight = component.getPreferredSize().height;
-//                maxPreferredHeight = Math.max(maxPreferredHeight, rendererHeight);
-//            }
-//
-//            // 최종 높이를 테이블에 설정 (기존 높이보다 커야만 설정)
-//            if (table.getRowHeight(row) != maxPreferredHeight) {
-//                table.setRowHeight(row, maxPreferredHeight);
-//            }
-//        }
-//    }
-
 
 
     // ===================== Setter =====================

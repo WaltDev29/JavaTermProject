@@ -15,6 +15,7 @@ public class ReviewDialog extends JDialog {
 
         setSize(400, 500);
         setLocationRelativeTo(parent);
+        setResizable(false);
         setLayout(new BorderLayout());
 
 
