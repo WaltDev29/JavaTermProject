@@ -152,8 +152,7 @@ public class DayMealView extends JPanel {
             Meal meal = mealList.get(i);
             model.setValueAt(types[i], i, 0);
             model.setValueAt(String.join(", ", meal.getMenus()), i, 1);
-            // todo 평점 넣는 로직 구현
-            //model.setValueAt(meal, i, 2);
+            model.setValueAt(meal.getRating(), i, 2);
         }
     }
 

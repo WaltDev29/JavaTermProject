@@ -146,7 +146,9 @@ public class ReviewView extends JPanel{
 
         for (int i = 0; i < list.size(); i++) {
             Review r = list.get(i);
-            model.setValueAt(r.getStudent_name(), i, 0);
+            String name = r.getStudent_name();
+            name = name.charAt(0) + "*".repeat(name.length() - 1);  // 이름 * 표시
+            model.setValueAt(name, i, 0);
             model.setValueAt(r.getComment(), i, 1);
             model.setValueAt(r.getRating(), i, 2);
         }

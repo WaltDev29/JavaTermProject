@@ -52,7 +52,6 @@ public class ReviewRepository {
     public boolean insertReview(int review_id, int meal_id, String student_id, String comment, int rating) {
         Connection con = JDBCConnector.getConnection();
         PreparedStatement ps;
-        ResultSet rs;
         boolean isDone = true;
 
         String sql = "INSERT INTO reviews (review_id, meal_id, student_id, review_comment, rating)\n" +
@@ -65,7 +64,7 @@ public class ReviewRepository {
             ps.setString(3,student_id);
             ps.setString(4, comment);
             ps.setInt(5,rating);
-            rs = ps.executeQuery();
+            ps.executeUpdate();
         }
         catch (SQLException e) {
             System.out.println("====== ERROR ======\n" + e.getMessage());
@@ -74,7 +73,6 @@ public class ReviewRepository {
         }
 
         try {
-            if (rs != null) rs.close();
             if (ps != null) ps.close();
             if (con != null) con.close();
         } catch (SQLException e) {

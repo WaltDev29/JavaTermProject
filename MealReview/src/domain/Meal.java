@@ -13,14 +13,16 @@ public class Meal {
     private String dayOfWeek;
     private String type;
     private ArrayList<String> menus;
+    private int rating;
 
-    public Meal(int mealId, Date date, String type) {
+    public Meal(int mealId, Date date, String type, int rating) {
         this.mealId = mealId;
         this.date = date;
         this.formatedDate = getFormatedDate(date);
         this.dayOfWeek = getKoreanDay(date);
         this.type = type;
         this.menus = new ArrayList<>();
+        this.rating = rating;
     }
 
     // 비어있는 학식용 객체
@@ -77,5 +79,9 @@ public class Meal {
 
     public ArrayList<String> getMenus() {
         return menus;
+    }
+
+    public int getRating() {
+        return rating;
     }
 }
