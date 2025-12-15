@@ -25,14 +25,6 @@ public class Meal {
         this.rating = rating;
     }
 
-    // 비어있는 학식용 객체
-    public Meal(Date date) {
-        this.mealId = 0;
-        this.date = date;
-        this.type = "none";
-        this.menus = new ArrayList<>();
-    }
-
     private String getFormatedDate(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일");
         return sdf.format(date);

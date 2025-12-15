@@ -64,8 +64,6 @@ public class MainController extends JFrame {
 
     // 날짜 변수
     LocalDate today = LocalDate.now();    // 오늘
-    // 방학기간은 학식이 없으니, 아래의 문장을 실행하여 테스트합니다.
-//    LocalDate today = LocalDate.of(2025, 12, 8);
     LocalDate monday = today.with(DayOfWeek.MONDAY);    // 이번주 월요일
     LocalDate friday = today.with(DayOfWeek.FRIDAY);    // 이번주 금요일
 

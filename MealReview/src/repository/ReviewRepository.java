@@ -30,7 +30,7 @@ public class ReviewRepository {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                Review review = new Review(rs.getInt("review_id"), rs.getInt("meal_id"), rs.getString("meal_type"), rs.getString("student_id"), rs.getString("name"), rs.getString("review_comment"), rs.getInt("rating"));
+                Review review = new Review(rs.getInt("review_id"), rs.getString("meal_type"), rs.getString("name"), rs.getString("review_comment"), rs.getInt("rating"));
                 reviewList.add(review);
             }
 
