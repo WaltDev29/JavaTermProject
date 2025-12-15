@@ -65,6 +65,7 @@ public class MainController extends JFrame {
 
     // 날짜 변수
     LocalDate today = LocalDate.now();    // 오늘
+//    LocalDate today = LocalDate.of(2025,12,15);    // 테스트를 위한 날짜
     LocalDate monday = today.with(DayOfWeek.MONDAY);    // 이번주 월요일
     LocalDate friday = today.with(DayOfWeek.FRIDAY);    // 이번주 금요일
 
@@ -289,7 +290,7 @@ public class MainController extends JFrame {
         char[] pwChars = tfSignUpPw.getPassword();
         String pw = new String(pwChars).strip();
         char[] pwCheckChars = tfSignUpPwCheck.getPassword();
-        String pwCheck = new String(pwChars).strip();
+        String pwCheck = new String(pwCheckChars).strip();
 
         if (tfSignUpId.getText().strip().isEmpty() || pw.isEmpty() || pwCheck.isEmpty()) {
             JOptionPane.showMessageDialog(signUpDialog, "모든 정보를 입력해주세요", "회원가입 오류", JOptionPane.WARNING_MESSAGE);
