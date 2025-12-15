@@ -82,6 +82,8 @@ public class DayMealView extends JPanel {
         table.getColumnModel().getColumn(1).setPreferredWidth(320);
         table.getColumnModel().getColumn(2).setPreferredWidth(40);
 
+        model.setRowCount(3);
+
         // 텍스트 가운데 정렬
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
@@ -127,9 +129,6 @@ public class DayMealView extends JPanel {
             buttonPan.add(btn);
         }
 
-        // 버튼 visible 설정
-        updateButtonVisibility();
-
 
 
         // 요소 배치
@@ -156,12 +155,15 @@ public class DayMealView extends JPanel {
 
         // 버튼 visible
         if (now.isBefore(breakfastTime)) return;
+        if ("-".equals(table.getValueAt(0, 1))) return;
         reviewBtns.get(0).setVisible(true);
 
         if (now.isBefore(lunchTime)) return;
+        if ("-".equals(table.getValueAt(1, 1))) return;
         reviewBtns.get(1).setVisible(true);
 
         if (now.isBefore(dinnerTime)) return;
+        if ("-".equals(table.getValueAt(2, 1))) return;
         reviewBtns.get(2).setVisible(true);
     }
 
@@ -170,8 +172,6 @@ public class DayMealView extends JPanel {
     // ===================== 데이터 설정 =====================
     public void setTable() {
         if (mealList == null) return;
-
-        model.setRowCount(3);
 
         // 기본값 설정
         String[] types = {"조식", "중식", "석식"};
@@ -194,6 +194,9 @@ public class DayMealView extends JPanel {
             model.setValueAt(String.join(", ", meal.getMenus()), row, 1);
             model.setValueAt(ratingStar[meal.getRating() - 1], row, 2);
         }
+
+        // 버튼 visible 설정
+        updateButtonVisibility();
     }
 
 
