@@ -169,20 +169,33 @@ public class DayMealView extends JPanel {
 
     // ===================== 데이터 설정 =====================
     public void setTable() {
-        // model에 행 개수 설정
         if (mealList == null) return;
 
-        model.setRowCount(mealList.size());
+        model.setRowCount(3);
 
+        // 기본값 설정
         String[] types = {"조식", "중식", "석식"};
-
-        for (int i = 0; i < mealList.size(); i++) {
-            Meal meal = mealList.get(i);
+        for (int i = 0; i < 3; i++) {
             model.setValueAt(types[i], i, 0);
-            model.setValueAt(String.join(", ", meal.getMenus()), i, 1);
-            model.setValueAt(ratingStar[meal.getRating()-1], i, 2);
+            model.setValueAt("-", i, 1);
+            model.setValueAt("-", i, 2);
+        }
+
+        for (Meal meal : mealList) {
+            int row = switch (meal.getType()) {
+                case "조식" -> 0;
+                case "중식" -> 1;
+                case "석식" -> 2;
+                default -> -1;
+            };
+
+            if (row == -1) continue;
+
+            model.setValueAt(String.join(", ", meal.getMenus()), row, 1);
+            model.setValueAt(ratingStar[meal.getRating() - 1], row, 2);
         }
     }
+
 
 
     // ===================== Getter & Setter =====================

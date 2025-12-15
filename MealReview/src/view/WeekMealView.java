@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class WeekMealView extends JPanel {
@@ -89,19 +90,46 @@ public class WeekMealView extends JPanel {
 
 
     // ===================== 데이터 설정 =====================
-    public void setTable() {
+    public void setTable(LocalDate today) {
         if (mealList == null) return;
 
-        model.setRowCount(mealList.size() / 3);
+        model.setRowCount(5);
 
-        for (int i = 0; i < mealList.size(); i++) {
-            Meal meal = mealList.get(i);
-            if (i % 3 == 0) model.setValueAt(meal.getDate() + " " + meal.getDayOfWeek(), i / 3, 0);
-            model.setValueAt(String.join(", ", meal.getMenus()), i / 3, (i % 3) + 1);
+        // 날짜 컬럼 설정
+        String[] dows = {"월요일", "화요일", "수요일", "목요일", "금요일"};
+        
+        for (int row = 0; row < 5; row++) {
+            LocalDate date = today.plusDays(row);
+            model.setValueAt(date + " " + dows[row], row, 0);
+
+            // 빈 값 기본 설정
+            model.setValueAt("-", row, 1);
+            model.setValueAt("-", row, 2);
+            model.setValueAt("-", row, 3);
         }
 
-//        resizeRowHeights();
+        // 메뉴 데이터 설정
+        for (Meal meal : mealList) {
+            LocalDate mealDate = meal.getDate().toLocalDate();
+
+            int row = (int) java.time.temporal.ChronoUnit.DAYS
+                    .between(today, mealDate);
+
+            if (row < 0 || row >= 5) continue;
+
+            int col = switch (meal.getType()) {
+                case "조식" -> 1;
+                case "중식" -> 2;
+                case "석식" -> 3;
+                default -> -1;
+            };
+
+            if (col == -1) continue;
+
+            model.setValueAt(String.join(", ", meal.getMenus()), row, col);
+        }
     }
+
 
 
     // ===================== Setter =====================
