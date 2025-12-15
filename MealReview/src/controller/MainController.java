@@ -3,6 +3,7 @@ package controller;
 import domain.Meal;
 import domain.Review;
 import repository.AccountRepository;
+import repository.CrawlingMealsRepository;
 import view.*;
 import repository.MealRepository;
 import repository.ReviewRepository;
@@ -12,15 +13,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-/* todo
-    1. 학식 데이터 자동으로 가져오는 로직 구현
-    */
 
 public class MainController extends JFrame {
     // View Pans
@@ -32,6 +32,7 @@ public class MainController extends JFrame {
     ReviewView reviewPan;
 
     // Repositories
+    CrawlingMealsRepository crawlingRepo;
     AccountRepository accountRepo;
     MealRepository mealRepo;
     ReviewRepository reviewRepo;
@@ -62,9 +63,9 @@ public class MainController extends JFrame {
 
 
     // 날짜 변수
-//    LocalDate today = LocalDate.now();    // 오늘
+    LocalDate today = LocalDate.now();    // 오늘
     // 방학기간은 학식이 없으니, 아래의 문장을 실행하여 테스트합니다.
-    LocalDate today = LocalDate.of(2025, 12, 8);
+//    LocalDate today = LocalDate.of(2025, 12, 8);
     LocalDate monday = today.with(DayOfWeek.MONDAY);    // 이번주 월요일
     LocalDate friday = today.with(DayOfWeek.FRIDAY);    // 이번주 금요일
 
@@ -75,6 +76,16 @@ public class MainController extends JFrame {
 
     // ===================== 생성자 =====================
     public MainController() {
+        crawlingRepo = new CrawlingMealsRepository();
+        try {
+            crawlingRepo.importDataFromWeb();
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         accountRepo = new AccountRepository();
         initLoginDialog();
     }
