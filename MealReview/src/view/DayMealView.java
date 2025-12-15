@@ -190,9 +190,11 @@ public class DayMealView extends JPanel {
             };
 
             if (row == -1) continue;
+            String rating = "";
+            if (meal.getRating() > 0) rating = ratingStar[meal.getRating() - 1];
 
             model.setValueAt(String.join(", ", meal.getMenus()), row, 1);
-            model.setValueAt(ratingStar[meal.getRating() - 1], row, 2);
+            model.setValueAt(rating, row, 2);
         }
 
         // 버튼 visible 설정
