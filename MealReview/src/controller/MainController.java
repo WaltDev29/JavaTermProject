@@ -20,6 +20,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class MainController extends JFrame {
@@ -44,14 +45,14 @@ public class MainController extends JFrame {
 
     // LogIn Elements
     JTextField tfLoginId;
-    JTextField tfLoginPw;
+    JPasswordField tfLoginPw;
     JButton signInBtn;
     JButton signUpBtn;
 
     // SignUp Elements
     JTextField tfSignUpId;
-    JTextField tfSignUpPw;
-    JTextField tfSignUpPwCheck;
+    JPasswordField tfSignUpPw;
+    JPasswordField tfSignUpPwCheck;
     JButton backToSignInBtn;
     JButton submitAccountBtn;
 
@@ -270,7 +271,9 @@ public class MainController extends JFrame {
     // ===================== 버튼 클릭 메서드 =====================
     // 로그인 버튼 클릭 메서드
     private void handleSignIn() {
-        if (accountRepo.checkAccount(tfLoginId.getText().strip(), tfLoginPw.getText().strip())) {
+        char[] pwChars = tfLoginPw.getPassword();
+        String pw = new String(pwChars).strip();
+        if (accountRepo.checkAccount(tfLoginId.getText().strip(), pw)) {
             JOptionPane.showMessageDialog(loginDialog, "로그인되었습니다.", "로그인 성공", JOptionPane.PLAIN_MESSAGE);
             student_id = tfLoginId.getText().strip();
             loginDialog.dispose();
@@ -278,27 +281,36 @@ public class MainController extends JFrame {
         } else {
             JOptionPane.showMessageDialog(loginDialog, "계정정보가 일치하지 않습니다.", "로그인 실패", JOptionPane.WARNING_MESSAGE);
         }
+        Arrays.fill(pwChars, '\0');
     }
 
     // 회원가입 버튼 클릭 메서드
     private void submitAccount() {
-        if (tfSignUpId.getText().strip().isEmpty() || tfSignUpPw.getText().strip().isEmpty() || tfSignUpPwCheck.getText().strip().isEmpty()) {
+        char[] pwChars = tfSignUpPw.getPassword();
+        String pw = new String(pwChars).strip();
+        char[] pwCheckChars = tfSignUpPwCheck.getPassword();
+        String pwCheck = new String(pwChars).strip();
+
+        if (tfSignUpId.getText().strip().isEmpty() || pw.isEmpty() || pwCheck.isEmpty()) {
             JOptionPane.showMessageDialog(signUpDialog, "모든 정보를 입력해주세요", "회원가입 오류", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        if (!tfSignUpPw.getText().strip().equals(tfSignUpPwCheck.getText().strip())) {
+        if (!pw.equals(pwCheck)) {
             JOptionPane.showMessageDialog(signUpDialog, "비밀번호가 일치하지 않습니다.", "회원가입 오류", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        String result = accountRepo.insertAccount(tfSignUpId.getText().strip(), tfSignUpPw.getText().strip());
+        String result = accountRepo.insertAccount(tfSignUpId.getText().strip(), pw);
 
         if (result.isEmpty()) {
             JOptionPane.showMessageDialog(signUpDialog, "회원가입이 정상적으로 완료되었습니다.", "회원가입 완료", JOptionPane.PLAIN_MESSAGE);
             signUpDialog.dispose();
             initLoginDialog();
         } else JOptionPane.showMessageDialog(signUpDialog, result, "회원가입 오류", JOptionPane.WARNING_MESSAGE);
+
+        Arrays.fill(pwChars, '\0');
+        Arrays.fill(pwCheckChars, '\0');
     }
 
     // 리뷰하기 버튼 클릭 메서드

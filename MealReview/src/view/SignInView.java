@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class SignInView extends JDialog {
     JTextField tfId;
-    JTextField tfPw;
+    JPasswordField tfPw;
 
     JButton signInBtn;
     JButton signUpBtn;
@@ -71,7 +71,7 @@ public class SignInView extends JDialog {
         form.add(lblPw);
 
         // Password 입력 TextField 설정
-        tfPw = new JTextField(18);
+        tfPw = new JPasswordField(18);
         tfPw.setMaximumSize(tfPw.getPreferredSize());
         tfPw.setAlignmentX(Component.CENTER_ALIGNMENT);
         form.add(tfPw);
@@ -106,7 +106,7 @@ public class SignInView extends JDialog {
         return tfId;
     }
 
-    public JTextField getTfPw() {
+    public JPasswordField getTfPw() {
         return tfPw;
     }
 

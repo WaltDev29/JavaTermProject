@@ -5,8 +5,8 @@ import java.awt.*;
 
 public class SignUpView extends JDialog{
     JTextField tfId;
-    JTextField tfPw;
-    JTextField tfPwCheck;
+    JPasswordField tfPw;
+    JPasswordField tfPwCheck;
 
     JButton signInBtn;
     JButton signUpBtn;
@@ -73,7 +73,7 @@ public class SignUpView extends JDialog{
         form.add(lblPw);
 
         // Password 입력 TextField 설정
-        tfPw = new JTextField(18);
+        tfPw = new JPasswordField(18);
         tfPw.setMaximumSize(tfPw.getPreferredSize());
         tfPw.setAlignmentX(Component.CENTER_ALIGNMENT);
         form.add(tfPw);
@@ -88,7 +88,7 @@ public class SignUpView extends JDialog{
         form.add(lblPwCheck);
 
         // Password Check 입력 TextField 설정
-        tfPwCheck = new JTextField(18);
+        tfPwCheck = new JPasswordField(18);
         tfPwCheck.setMaximumSize(tfPwCheck.getPreferredSize());
         tfPwCheck.setAlignmentX(Component.CENTER_ALIGNMENT);
         form.add(tfPwCheck);
@@ -123,11 +123,11 @@ public class SignUpView extends JDialog{
         return tfId;
     }
 
-    public JTextField getTfPw() {
+    public JPasswordField getTfPw() {
         return tfPw;
     }
 
-    public JTextField getTfPwCheck() {
+    public JPasswordField getTfPwCheck() {
         return tfPwCheck;
     }
 
