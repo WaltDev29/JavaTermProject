@@ -12,7 +12,10 @@ public class ReviewView extends JPanel{
     private JTable table;
     private DefaultTableModel model;
     private JTabbedPane tab;
+    JPanel northPanel;
     private String[] colNames = {"이름", "리뷰", "평점"};
+
+    private String[] ratingStar = {"☆", "★","★☆","★★","★★☆","★★★","★★★☆","★★★★","★★★★☆","★★★★★"};
 
     private ArrayList<Review> reviewList;
     private ArrayList<Review> reviewList_breakfast;
@@ -23,6 +26,9 @@ public class ReviewView extends JPanel{
     public ReviewView(String date, String dow) {
         // 레이아웃 설정
         setLayout(new BorderLayout());
+
+        northPanel = new JPanel();
+        northPanel.setLayout(new BorderLayout());
 
         // Title Label 설정
         JLabel lblTitle = new JLabel("오늘의 리뷰");
@@ -46,7 +52,8 @@ public class ReviewView extends JPanel{
         headerPan.add(lblDate);
         headerPan.add(Box.createVerticalStrut(10)); // 간격 추가
 
-        add(headerPan, BorderLayout.NORTH);
+        northPanel.add(headerPan, BorderLayout.NORTH);
+        add(northPanel, BorderLayout.NORTH);
     }
 
 
@@ -112,7 +119,9 @@ public class ReviewView extends JPanel{
 
         
         // 요소 배치
-        add(tab, BorderLayout.NORTH);
+        northPanel.add(tab, BorderLayout.CENTER);
+
+        add(northPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
         setTable(reviewList_breakfast); // 기본으로 보여줄 데이터 설정
@@ -155,9 +164,14 @@ public class ReviewView extends JPanel{
             Review r = list.get(i);
             String name = r.getStudent_name();
             name = name.charAt(0) + "*".repeat(name.length() - 1);  // 이름 * 표시
+
+            String rating = "";
+            if (r.getRating() > 0) rating = ratingStar[r.getRating() - 1];
+
+
             model.setValueAt(name, i, 0);
             model.setValueAt(r.getComment(), i, 1);
-            model.setValueAt(r.getRating(), i, 2);
+            model.setValueAt(rating, i, 2);
         }
     }
 }
